@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
   component: WeddingPage,
 });
 
-const WEDDING_DATE = new Date("2025-08-15T19:00:00+05:00");
+const WEDDING_DATE = new Date("2026-09-09T18:00:00+05:00");
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState(() => Date.now());
