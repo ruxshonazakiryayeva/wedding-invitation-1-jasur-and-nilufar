@@ -72,7 +72,7 @@ function WeddingPage() {
         ref={audioRef}
         loop
         preload="none"
-        src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1d4d8e2ad8.mp3?filename=romantic-piano-100378.mp3"
+        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
       />
       <Petals />
 
@@ -82,9 +82,9 @@ function WeddingPage() {
           type="button"
           onClick={toggleMusic}
           aria-label={playing ? "Musiqani to'xtatish" : "Musiqani yoqish"}
-          className="fixed right-4 top-4 z-50 grid h-12 w-12 place-items-center rounded-full border border-gold/40 bg-card/80 text-mocha shadow-[var(--shadow-soft)] backdrop-blur transition hover:scale-105"
+          className="fixed right-4 top-4 z-50 grid h-12 w-12 place-items-center rounded-full border border-gold/40 bg-card/80 text-lg text-mocha shadow-[var(--shadow-soft)] backdrop-blur transition hover:scale-105"
         >
-          {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+          <span aria-hidden>{playing ? "⏸" : "🎵"}</span>
         </button>
       )}
 
