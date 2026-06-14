@@ -79,15 +79,15 @@ function WeddingPage() {
       />
       <Petals />
 
-      {/* Music toggle */}
+      {/* Music toggle — bottom right, momento style */}
       {opened && (
         <button
           type="button"
           onClick={toggleMusic}
           aria-label={playing ? "Musiqani to'xtatish" : "Musiqani yoqish"}
-          className="fixed right-4 top-4 z-50 grid h-12 w-12 place-items-center rounded-full border border-gold/40 bg-card/80 text-lg text-mocha shadow-[var(--shadow-soft)] backdrop-blur transition hover:scale-105"
+          className={`fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-[color:var(--gold-light)] to-[color:var(--gold)] text-mocha shadow-[var(--shadow-gold)] transition hover:scale-105 ${playing ? "animate-[spin_6s_linear_infinite]" : ""}`}
         >
-          <span aria-hidden>{playing ? "⏸" : "🎵"}</span>
+          <Music className="h-5 w-5" />
         </button>
       )}
 
