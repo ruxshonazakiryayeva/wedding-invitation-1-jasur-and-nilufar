@@ -385,12 +385,19 @@ function Rsvp() {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") ?? ""),
+      attendance: String(fd.get("attendance") ?? ""),
+      guests: Number(fd.get("guests") ?? 1),
+      comment: String(fd.get("comment") ?? ""),
+    };
     setStatus("sending");
     try {
       const res = await fetch("https://formspree.io/f/xpqekqwr", {
         method: "POST",
-        headers: { Accept: "application/json" },
-        body: new FormData(form),
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setStatus("ok");
