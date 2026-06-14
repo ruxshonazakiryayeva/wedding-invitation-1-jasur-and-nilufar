@@ -173,8 +173,8 @@ function Hero() {
           </h1>
         </Reveal>
         <Reveal delay={300}>
-          <p className="mt-8 text-2xl tracking-[0.3em] text-mocha/70">15 · 08 · 2025</p>
-          <p className="mt-2 text-sm uppercase tracking-[0.4em] text-mocha/60">15 Avgust 2025 · Juma</p>
+          <p className="mt-8 text-2xl tracking-[0.3em] text-mocha/70">09 · 09 · 2026</p>
+          <p className="mt-2 text-sm uppercase tracking-[0.4em] text-mocha/60">9 Sentyabr 2026 · Chorshanba</p>
         </Reveal>
         <Reveal delay={450}>
           <div className="mx-auto mt-12 grid max-w-xl grid-cols-4 gap-3 sm:gap-6">
