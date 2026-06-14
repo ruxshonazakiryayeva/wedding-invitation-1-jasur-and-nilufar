@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { Heart, Pause, Play, MapPin, Calendar as CalendarIcon, Send } from "lucide-react";
+import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg";
+import floralFrame from "@/assets/floral-frame.png";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
@@ -26,8 +27,10 @@ export const Route = createFileRoute("/")({
 const WEDDING_DATE = new Date("2026-09-09T18:00:00+05:00");
 
 function useCountdown(target: Date) {
-  const [now, setNow] = useState(() => Date.now());
+  // Start at target time so SSR + initial client render both yield 0 → no hydration mismatch
+  const [now, setNow] = useState(() => target.getTime());
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -76,15 +79,15 @@ function WeddingPage() {
       />
       <Petals />
 
-      {/* Music toggle */}
+      {/* Music toggle — bottom right, momento style */}
       {opened && (
         <button
           type="button"
           onClick={toggleMusic}
           aria-label={playing ? "Musiqani to'xtatish" : "Musiqani yoqish"}
-          className="fixed right-4 top-4 z-50 grid h-12 w-12 place-items-center rounded-full border border-gold/40 bg-card/80 text-lg text-mocha shadow-[var(--shadow-soft)] backdrop-blur transition hover:scale-105"
+          className={`fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-[color:var(--gold-light)] to-[color:var(--gold)] text-mocha shadow-[var(--shadow-gold)] transition hover:scale-105 ${playing ? "animate-[spin_6s_linear_infinite]" : ""}`}
         >
-          <span aria-hidden>{playing ? "⏸" : "🎵"}</span>
+          <Music className="h-5 w-5" />
         </button>
       )}
 
@@ -153,45 +156,59 @@ function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen items-center justify-center px-6 py-24 text-center"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-20 text-center"
       style={{
-        backgroundImage: `linear-gradient(rgba(245,235,220,0.7), rgba(245,235,220,0.85)), url(${heroBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
+        background: "var(--gradient-cream)",
       }}
     >
+      {/* Floral frame overlay */}
+      <img
+        src={floralFrame}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-90 mix-blend-multiply"
+      />
+
       <div className="relative z-10 mx-auto max-w-3xl">
         <Reveal>
-          <span className="divider-gold text-xs uppercase tracking-[0.4em]">To'y Taklifnomasi</span>
+          <p className="text-[10px] uppercase tracking-[0.6em] text-gold sm:text-xs">The Wedding</p>
         </Reveal>
         <Reveal delay={150}>
-          <h1 className="mt-8 font-serif text-6xl italic leading-none text-mocha sm:text-7xl md:text-8xl">
-            Jasur
-            <span className="mx-3 text-gold-gradient">&amp;</span>
-            Nilufar
+          <h1 className="mt-6 font-serif text-6xl leading-[1.05] text-mocha sm:text-7xl md:text-8xl">
+            <span className="text-gold-gradient italic">Jasur</span>
+            <span className="mx-2 text-mocha/60 italic">&amp;</span>
+            <br className="sm:hidden" />
+            <span className="text-gold-gradient italic">Nilufar</span>
           </h1>
         </Reveal>
         <Reveal delay={300}>
-          <p className="mt-8 text-2xl tracking-[0.3em] text-mocha/70">09 · 09 · 2026</p>
-          <p className="mt-2 text-sm uppercase tracking-[0.4em] text-mocha/60">9 Sentyabr 2026 · Chorshanba</p>
+          <p className="mt-6 text-xl tracking-[0.4em] text-mocha/70 sm:text-2xl">09 · 09 · 2026</p>
         </Reveal>
         <Reveal delay={450}>
-          <div className="mx-auto mt-12 grid max-w-xl grid-cols-4 gap-3 sm:gap-6">
+          <div className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-3 sm:max-w-xl sm:grid-cols-4">
             {cells.map((c) => (
               <div
                 key={c.label}
-                className="rounded-lg border border-gold/30 bg-card/80 px-2 py-4 shadow-[var(--shadow-soft)] backdrop-blur"
+                className="rounded-2xl border border-gold/25 bg-card/70 px-3 py-5 shadow-[var(--shadow-soft)] backdrop-blur-sm"
               >
-                <div className="text-gold-gradient text-3xl font-semibold tabular-nums sm:text-5xl">
+                <div className="font-serif text-4xl font-semibold tabular-nums text-mocha sm:text-5xl">
                   {String(c.value).padStart(2, "0")}
                 </div>
-                <div className="mt-1 text-[10px] uppercase tracking-[0.25em] text-mocha/60 sm:text-xs">
+                <div className="mt-1 text-[10px] uppercase tracking-[0.3em] text-mocha/55 sm:text-xs">
                   {c.label}
                 </div>
               </div>
             ))}
           </div>
+        </Reveal>
+        <Reveal delay={650}>
+          <a
+            href="#taklifnoma"
+            aria-label="Pastga aylantirish"
+            className="mt-12 inline-grid h-10 w-10 place-items-center rounded-full text-gold animate-[heartbeat_2s_ease-in-out_infinite]"
+          >
+            <ChevronDown className="h-7 w-7" />
+          </a>
         </Reveal>
       </div>
     </section>
@@ -200,20 +217,20 @@ function Hero() {
 
 function Invitation() {
   return (
-    <section className="px-6 py-24">
+    <section id="taklifnoma" className="px-6 py-24">
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
-          <span className="divider-gold text-xs uppercase tracking-[0.4em]">Taklifnoma</span>
-          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">
-            Aziz mehmonlar
-          </h2>
-          <p className="mt-8 font-serif text-xl leading-relaxed text-mocha/80 sm:text-2xl">
-            Sizni hayotimizdagi eng baxtli kun — nikoh to'yimizga taklif etamiz.
-            Bizning baxtimizga sherik bo'lishingizdan mamnun bo'lamiz.
+          <h2 className="font-serif text-4xl text-gold sm:text-5xl">Taklifnoma</h2>
+          <div className="mt-4 text-gold">✦</div>
+          <p className="mt-8 font-serif text-2xl italic text-mocha sm:text-3xl">
+            Aziz qarindoshlar va do'stlar!
           </p>
-          <p className="mt-10 font-serif text-lg italic text-gold">
-            — Jasur va Nilufar
+          <p className="mt-6 font-serif text-lg italic leading-relaxed text-mocha/80 sm:text-xl">
+            Quvonch ila sizni hayotimizdagi eng muhim kunlardan biri — to'y kunimizni biz bilan
+            birga nishonlashga taklif qilamiz. Bu unutilmas lahzada yonimizda bo'lishingiz biz uchun
+            katta sharafdir.
           </p>
+          <p className="mt-8 font-serif text-base italic text-gold">— Jasur va Nilufar</p>
         </Reveal>
       </div>
     </section>
@@ -225,29 +242,31 @@ function Schedule() {
     { time: "19:00", title: "Mehmonlar yig'ilishi", desc: "Salomlashuv va xush kelibsiz koktyeli" },
     { time: "19:30", title: "Rasmiy qism", desc: "Nikoh marosimi va tabriklar" },
     { time: "20:00", title: "Asosiy dastur", desc: "Ziyofat, raqs va musiqa" },
-    { time: "22:00", title: "Kechaning yakuni", desc: "Yodgorlik fotosessiya" },
+    { time: "22:00", title: "Kechaning yakuni", desc: "Xotira uchun samimiy lahzalar" },
   ];
   return (
     <section className="bg-[color:var(--cream)] px-6 py-24">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-xl">
         <Reveal className="text-center">
-          <span className="divider-gold text-xs uppercase tracking-[0.4em]">Kun Dasturi</span>
-          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">Marosim tartibi</h2>
+          <h2 className="font-serif text-4xl text-gold sm:text-5xl">Kun dasturi</h2>
+          <div className="mt-4 text-gold">✦</div>
         </Reveal>
-        <div className="mt-14 grid gap-6">
-          {items.map((it, i) => (
-            <Reveal key={it.time} delay={i * 100}>
-              <div className="grid grid-cols-[auto_1fr] items-center gap-6 rounded-2xl border border-gold/25 bg-card px-6 py-5 shadow-[var(--shadow-soft)]">
-                <div className="text-gold-gradient font-serif text-3xl font-semibold tabular-nums sm:text-4xl">
-                  {it.time}
+        <div className="relative mt-14 pl-10 sm:pl-14">
+          {/* vertical line */}
+          <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-transparent via-gold/60 to-transparent sm:left-5" />
+          <ul className="space-y-10">
+            {items.map((it, i) => (
+              <Reveal as="li" key={it.time} delay={i * 100}>
+                <div className="relative">
+                  {/* dot */}
+                  <span className="absolute -left-[34px] top-2 grid h-3 w-3 place-items-center rounded-full bg-gradient-to-br from-[color:var(--gold-light)] to-[color:var(--gold)] shadow-[0_0_0_4px_color-mix(in_oklab,var(--gold)_15%,transparent)] sm:-left-[42px]" />
+                  <p className="font-serif text-lg tracking-widest text-gold sm:text-xl">{it.time}</p>
+                  <h3 className="mt-2 font-serif text-2xl text-mocha sm:text-3xl">{it.title}</h3>
+                  <p className="mt-1 text-sm italic text-mocha/60 sm:text-base">{it.desc}</p>
                 </div>
-                <div className="border-l border-gold/30 pl-6">
-                  <h3 className="font-serif text-xl text-mocha sm:text-2xl">{it.title}</h3>
-                  <p className="mt-1 text-sm text-mocha/65 sm:text-base">{it.desc}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
@@ -527,8 +546,8 @@ function Closing() {
           <div className="mt-12 flex justify-center">
             <Heart className="h-8 w-8 fill-gold text-gold animate-heartbeat" />
           </div>
-          <p className="mt-10 font-serif text-xl italic text-mocha/75">
-            Jasur &amp; Nilufar — 15.08.2025
+          <p className="mt-10 text-xs uppercase tracking-[0.4em] text-mocha/60">
+            Jasur &amp; Nilufar · 09.09.2026
           </p>
         </Reveal>
       </div>
