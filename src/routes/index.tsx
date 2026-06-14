@@ -470,7 +470,7 @@ function Rsvp() {
             </button>
 
             {status === "ok" && (
-              <p className="text-center text-sm text-mocha/75">Rahmat! Javobingiz qabul qilindi 💛</p>
+              <p className="text-center text-sm text-mocha/75">💌 Rahmat! Sizni kutamiz.</p>
             )}
             {status === "err" && (
               <p className="text-center text-sm text-destructive">Xatolik yuz berdi. Qayta urinib ko'ring.</p>
