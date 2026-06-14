@@ -572,3 +572,30 @@ function Closing() {
     </section>
   );
 }
+
+function LangSwitcher({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
+  return (
+    <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2">
+      <div className="flex items-center gap-1 rounded-full border border-gold/30 bg-card/85 px-1.5 py-1 shadow-[var(--shadow-soft)] backdrop-blur">
+        {LANGS.map((l) => {
+          const active = lang === l;
+          return (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLang(l)}
+              className={`grid h-8 min-w-8 place-items-center rounded-full px-3 text-xs font-medium tracking-widest transition ${
+                active
+                  ? "bg-gradient-to-br from-[color:var(--gold-light)] to-[color:var(--gold)] text-mocha shadow-[var(--shadow-gold)]"
+                  : "text-mocha/70 hover:text-mocha"
+              }`}
+              aria-pressed={active}
+            >
+              {l}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
