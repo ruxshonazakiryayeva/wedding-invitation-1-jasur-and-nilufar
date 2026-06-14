@@ -42,42 +42,60 @@ function useCountdown(target: Date) {
   return { days, hours, minutes, seconds };
 }
 
+const YT_VIDEO_ID = "f_un1rejAcw";
+const LANGS = ["RU", "EN", "UZ", "ЎЗ"] as const;
+type Lang = (typeof LANGS)[number];
+
 function WeddingPage() {
   const [opened, setOpened] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [lang, setLang] = useState<Lang>("UZ");
+  const ytRef = useRef<HTMLIFrameElement | null>(null);
+
+  const ytCommand = (func: "playVideo" | "pauseVideo" | "setVolume", args: unknown[] = []) => {
+    ytRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "command", func, args }),
+      "*",
+    );
+  };
 
   const handleOpen = () => {
     setOpened(true);
-    if (audioRef.current) {
-      audioRef.current.volume = 0.4;
-      audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
-    }
+    // Tell YouTube to start (autoplay is enabled in src, this is the user-gesture nudge)
+    ytCommand("setVolume", [40]);
+    ytCommand("playVideo");
+    setPlaying(true);
     setTimeout(() => {
       document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" });
     }, 300);
   };
 
   const toggleMusic = () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (a.paused) {
-      a.play().then(() => setPlaying(true)).catch(() => {});
-    } else {
-      a.pause();
+    if (playing) {
+      ytCommand("pauseVideo");
       setPlaying(false);
+    } else {
+      ytCommand("playVideo");
+      setPlaying(true);
     }
   };
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
-      <audio
-        ref={audioRef}
-        loop
-        preload="none"
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+      {/* Hidden YouTube player as background music source */}
+      <iframe
+        ref={ytRef}
+        title="Background music"
+        aria-hidden
+        tabIndex={-1}
+        src={`https://www.youtube.com/embed/${YT_VIDEO_ID}?enablejsapi=1&autoplay=1&loop=1&playlist=${YT_VIDEO_ID}&controls=0&modestbranding=1&playsinline=1&rel=0`}
+        allow="autoplay; encrypted-media"
+        className="pointer-events-none fixed -left-[9999px] top-0 h-px w-px opacity-0"
       />
       <Petals />
+
+      {/* Language selector — top center */}
+      {opened && <LangSwitcher lang={lang} setLang={setLang} />}
 
       {/* Music toggle — bottom right, momento style */}
       {opened && (
@@ -552,5 +570,32 @@ function Closing() {
         </Reveal>
       </div>
     </section>
+  );
+}
+
+function LangSwitcher({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
+  return (
+    <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2">
+      <div className="flex items-center gap-1 rounded-full border border-gold/30 bg-card/85 px-1.5 py-1 shadow-[var(--shadow-soft)] backdrop-blur">
+        {LANGS.map((l) => {
+          const active = lang === l;
+          return (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLang(l)}
+              className={`grid h-8 min-w-8 place-items-center rounded-full px-3 text-xs font-medium tracking-widest transition ${
+                active
+                  ? "bg-gradient-to-br from-[color:var(--gold-light)] to-[color:var(--gold)] text-mocha shadow-[var(--shadow-gold)]"
+                  : "text-mocha/70 hover:text-mocha"
+              }`}
+              aria-pressed={active}
+            >
+              {l}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
