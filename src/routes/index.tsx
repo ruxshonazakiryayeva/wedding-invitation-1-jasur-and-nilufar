@@ -546,8 +546,8 @@ function Closing() {
           <div className="mt-12 flex justify-center">
             <Heart className="h-8 w-8 fill-gold text-gold animate-heartbeat" />
           </div>
-          <p className="mt-10 font-serif text-xl italic text-mocha/75">
-            Jasur &amp; Nilufar — 15.08.2025
+          <p className="mt-10 text-xs uppercase tracking-[0.4em] text-mocha/60">
+            Jasur &amp; Nilufar · 09.09.2026
           </p>
         </Reveal>
       </div>
