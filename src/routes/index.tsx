@@ -255,9 +255,9 @@ function Schedule() {
 }
 
 function CalendarSection() {
-  // August 2025 — 1st is Friday
-  const firstDayOffset = 4; // Mon=0 -> Aug 1 = Fri
-  const daysInMonth = 31;
+  // September 2026 — 1st is Tuesday (Mon=0 -> offset 1)
+  const firstDayOffset = 1;
+  const daysInMonth = 30;
   const cells: (number | null)[] = [
     ...Array.from({ length: firstDayOffset }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
@@ -267,7 +267,7 @@ function CalendarSection() {
       <div className="mx-auto max-w-xl text-center">
         <Reveal>
           <span className="divider-gold text-xs uppercase tracking-[0.4em]">Sana</span>
-          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">Avgust 2025</h2>
+          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">Sentyabr 2026</h2>
         </Reveal>
         <Reveal delay={150}>
           <div className="mt-12 rounded-2xl border border-gold/30 bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8">
@@ -278,11 +278,11 @@ function CalendarSection() {
             </div>
             <div className="mt-2 grid grid-cols-7 gap-2">
               {cells.map((d, i) => {
-                const isWedding = d === 15;
+                const isWedding = d === 9;
                 return (
                   <div
                     key={i}
-                    className={`grid aspect-square place-items-center rounded-lg font-serif text-base sm:text-lg ${
+                    className={`relative grid aspect-square place-items-center rounded-full font-serif text-base sm:text-lg ${
                       d == null
                         ? ""
                         : isWedding
@@ -291,7 +291,7 @@ function CalendarSection() {
                     }`}
                   >
                     {d ?? ""}
-                    {isWedding && <Heart className="absolute h-3 w-3 -translate-y-5 translate-x-4 fill-mocha text-mocha" />}
+                    {isWedding && <Heart className="absolute -top-1 right-0 h-3 w-3 fill-mocha text-mocha" />}
                   </div>
                 );
               })}
