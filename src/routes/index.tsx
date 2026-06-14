@@ -217,20 +217,20 @@ function Hero() {
 
 function Invitation() {
   return (
-    <section className="px-6 py-24">
+    <section id="taklifnoma" className="px-6 py-24">
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
-          <span className="divider-gold text-xs uppercase tracking-[0.4em]">Taklifnoma</span>
-          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">
-            Aziz mehmonlar
-          </h2>
-          <p className="mt-8 font-serif text-xl leading-relaxed text-mocha/80 sm:text-2xl">
-            Sizni hayotimizdagi eng baxtli kun — nikoh to'yimizga taklif etamiz.
-            Bizning baxtimizga sherik bo'lishingizdan mamnun bo'lamiz.
+          <h2 className="font-serif text-4xl text-gold sm:text-5xl">Taklifnoma</h2>
+          <div className="mt-4 text-gold">✦</div>
+          <p className="mt-8 font-serif text-2xl italic text-mocha sm:text-3xl">
+            Aziz qarindoshlar va do'stlar!
           </p>
-          <p className="mt-10 font-serif text-lg italic text-gold">
-            — Jasur va Nilufar
+          <p className="mt-6 font-serif text-lg italic leading-relaxed text-mocha/80 sm:text-xl">
+            Quvonch ila sizni hayotimizdagi eng muhim kunlardan biri — to'y kunimizni biz bilan
+            birga nishonlashga taklif qilamiz. Bu unutilmas lahzada yonimizda bo'lishingiz biz uchun
+            katta sharafdir.
           </p>
+          <p className="mt-8 font-serif text-base italic text-gold">— Jasur va Nilufar</p>
         </Reveal>
       </div>
     </section>
@@ -242,29 +242,31 @@ function Schedule() {
     { time: "19:00", title: "Mehmonlar yig'ilishi", desc: "Salomlashuv va xush kelibsiz koktyeli" },
     { time: "19:30", title: "Rasmiy qism", desc: "Nikoh marosimi va tabriklar" },
     { time: "20:00", title: "Asosiy dastur", desc: "Ziyofat, raqs va musiqa" },
-    { time: "22:00", title: "Kechaning yakuni", desc: "Yodgorlik fotosessiya" },
+    { time: "22:00", title: "Kechaning yakuni", desc: "Xotira uchun samimiy lahzalar" },
   ];
   return (
     <section className="bg-[color:var(--cream)] px-6 py-24">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-xl">
         <Reveal className="text-center">
-          <span className="divider-gold text-xs uppercase tracking-[0.4em]">Kun Dasturi</span>
-          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">Marosim tartibi</h2>
+          <h2 className="font-serif text-4xl text-gold sm:text-5xl">Kun dasturi</h2>
+          <div className="mt-4 text-gold">✦</div>
         </Reveal>
-        <div className="mt-14 grid gap-6">
-          {items.map((it, i) => (
-            <Reveal key={it.time} delay={i * 100}>
-              <div className="grid grid-cols-[auto_1fr] items-center gap-6 rounded-2xl border border-gold/25 bg-card px-6 py-5 shadow-[var(--shadow-soft)]">
-                <div className="text-gold-gradient font-serif text-3xl font-semibold tabular-nums sm:text-4xl">
-                  {it.time}
+        <div className="relative mt-14 pl-10 sm:pl-14">
+          {/* vertical line */}
+          <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-transparent via-gold/60 to-transparent sm:left-5" />
+          <ul className="space-y-10">
+            {items.map((it, i) => (
+              <Reveal as="li" key={it.time} delay={i * 100}>
+                <div className="relative">
+                  {/* dot */}
+                  <span className="absolute -left-[34px] top-2 grid h-3 w-3 place-items-center rounded-full bg-gradient-to-br from-[color:var(--gold-light)] to-[color:var(--gold)] shadow-[0_0_0_4px_color-mix(in_oklab,var(--gold)_15%,transparent)] sm:-left-[42px]" />
+                  <p className="font-serif text-lg tracking-widest text-gold sm:text-xl">{it.time}</p>
+                  <h3 className="mt-2 font-serif text-2xl text-mocha sm:text-3xl">{it.title}</h3>
+                  <p className="mt-1 text-sm italic text-mocha/60 sm:text-base">{it.desc}</p>
                 </div>
-                <div className="border-l border-gold/30 pl-6">
-                  <h3 className="font-serif text-xl text-mocha sm:text-2xl">{it.title}</h3>
-                  <p className="mt-1 text-sm text-mocha/65 sm:text-base">{it.desc}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
