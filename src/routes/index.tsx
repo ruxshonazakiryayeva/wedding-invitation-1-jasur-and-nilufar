@@ -72,7 +72,7 @@ function WeddingPage() {
         ref={audioRef}
         loop
         preload="none"
-        src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1d4d8e2ad8.mp3?filename=romantic-piano-100378.mp3"
+        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
       />
       <Petals />
 
@@ -82,9 +82,9 @@ function WeddingPage() {
           type="button"
           onClick={toggleMusic}
           aria-label={playing ? "Musiqani to'xtatish" : "Musiqani yoqish"}
-          className="fixed right-4 top-4 z-50 grid h-12 w-12 place-items-center rounded-full border border-gold/40 bg-card/80 text-mocha shadow-[var(--shadow-soft)] backdrop-blur transition hover:scale-105"
+          className="fixed right-4 top-4 z-50 grid h-12 w-12 place-items-center rounded-full border border-gold/40 bg-card/80 text-lg text-mocha shadow-[var(--shadow-soft)] backdrop-blur transition hover:scale-105"
         >
-          {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+          <span aria-hidden>{playing ? "⏸" : "🎵"}</span>
         </button>
       )}
 
@@ -173,8 +173,8 @@ function Hero() {
           </h1>
         </Reveal>
         <Reveal delay={300}>
-          <p className="mt-8 text-2xl tracking-[0.3em] text-mocha/70">15 · 08 · 2025</p>
-          <p className="mt-2 text-sm uppercase tracking-[0.4em] text-mocha/60">15 Avgust 2025 · Juma</p>
+          <p className="mt-8 text-2xl tracking-[0.3em] text-mocha/70">09 · 09 · 2026</p>
+          <p className="mt-2 text-sm uppercase tracking-[0.4em] text-mocha/60">9 Sentyabr 2026 · Chorshanba</p>
         </Reveal>
         <Reveal delay={450}>
           <div className="mx-auto mt-12 grid max-w-xl grid-cols-4 gap-3 sm:gap-6">
@@ -255,9 +255,9 @@ function Schedule() {
 }
 
 function CalendarSection() {
-  // August 2025 — 1st is Friday
-  const firstDayOffset = 4; // Mon=0 -> Aug 1 = Fri
-  const daysInMonth = 31;
+  // September 2026 — 1st is Tuesday (Mon=0 -> offset 1)
+  const firstDayOffset = 1;
+  const daysInMonth = 30;
   const cells: (number | null)[] = [
     ...Array.from({ length: firstDayOffset }, () => null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
@@ -267,7 +267,7 @@ function CalendarSection() {
       <div className="mx-auto max-w-xl text-center">
         <Reveal>
           <span className="divider-gold text-xs uppercase tracking-[0.4em]">Sana</span>
-          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">Avgust 2025</h2>
+          <h2 className="mt-6 font-serif text-4xl italic text-mocha sm:text-5xl">Sentyabr 2026</h2>
         </Reveal>
         <Reveal delay={150}>
           <div className="mt-12 rounded-2xl border border-gold/30 bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8">
@@ -278,11 +278,11 @@ function CalendarSection() {
             </div>
             <div className="mt-2 grid grid-cols-7 gap-2">
               {cells.map((d, i) => {
-                const isWedding = d === 15;
+                const isWedding = d === 9;
                 return (
                   <div
                     key={i}
-                    className={`grid aspect-square place-items-center rounded-lg font-serif text-base sm:text-lg ${
+                    className={`relative grid aspect-square place-items-center rounded-full font-serif text-base sm:text-lg ${
                       d == null
                         ? ""
                         : isWedding
@@ -291,7 +291,7 @@ function CalendarSection() {
                     }`}
                   >
                     {d ?? ""}
-                    {isWedding && <Heart className="absolute h-3 w-3 -translate-y-5 translate-x-4 fill-mocha text-mocha" />}
+                    {isWedding && <Heart className="absolute -top-1 right-0 h-3 w-3 fill-mocha text-mocha" />}
                   </div>
                 );
               })}
@@ -385,12 +385,19 @@ function Rsvp() {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") ?? ""),
+      attendance: String(fd.get("attendance") ?? ""),
+      guests: Number(fd.get("guests") ?? 1),
+      comment: String(fd.get("comment") ?? ""),
+    };
     setStatus("sending");
     try {
       const res = await fetch("https://formspree.io/f/xpqekqwr", {
         method: "POST",
-        headers: { Accept: "application/json" },
-        body: new FormData(form),
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setStatus("ok");
@@ -463,7 +470,7 @@ function Rsvp() {
             </button>
 
             {status === "ok" && (
-              <p className="text-center text-sm text-mocha/75">Rahmat! Javobingiz qabul qilindi 💛</p>
+              <p className="text-center text-sm text-mocha/75">💌 Rahmat! Sizni kutamiz.</p>
             )}
             {status === "err" && (
               <p className="text-center text-sm text-destructive">Xatolik yuz berdi. Qayta urinib ko'ring.</p>
