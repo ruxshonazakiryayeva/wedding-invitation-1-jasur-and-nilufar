@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { Heart, Pause, Play, MapPin, Calendar as CalendarIcon, Send } from "lucide-react";
+import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg";
+import floralFrame from "@/assets/floral-frame.png";
 import g1 from "@/assets/gallery-1.jpg";
 import g2 from "@/assets/gallery-2.jpg";
 import g3 from "@/assets/gallery-3.jpg";
