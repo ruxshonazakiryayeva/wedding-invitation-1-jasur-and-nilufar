@@ -26,8 +26,10 @@ export const Route = createFileRoute("/")({
 const WEDDING_DATE = new Date("2026-09-09T18:00:00+05:00");
 
 function useCountdown(target: Date) {
-  const [now, setNow] = useState(() => Date.now());
+  // Start at target time so SSR + initial client render both yield 0 → no hydration mismatch
+  const [now, setNow] = useState(() => target.getTime());
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
