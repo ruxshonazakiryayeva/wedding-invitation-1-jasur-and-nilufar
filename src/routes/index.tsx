@@ -156,45 +156,59 @@ function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen items-center justify-center px-6 py-24 text-center"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-20 text-center"
       style={{
-        backgroundImage: `linear-gradient(rgba(245,235,220,0.7), rgba(245,235,220,0.85)), url(${heroBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
+        background: "var(--gradient-cream)",
       }}
     >
+      {/* Floral frame overlay */}
+      <img
+        src={floralFrame}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-90 mix-blend-multiply"
+      />
+
       <div className="relative z-10 mx-auto max-w-3xl">
         <Reveal>
-          <span className="divider-gold text-xs uppercase tracking-[0.4em]">To'y Taklifnomasi</span>
+          <p className="text-[10px] uppercase tracking-[0.6em] text-gold sm:text-xs">The Wedding</p>
         </Reveal>
         <Reveal delay={150}>
-          <h1 className="mt-8 font-serif text-6xl italic leading-none text-mocha sm:text-7xl md:text-8xl">
-            Jasur
-            <span className="mx-3 text-gold-gradient">&amp;</span>
-            Nilufar
+          <h1 className="mt-6 font-serif text-6xl leading-[1.05] text-mocha sm:text-7xl md:text-8xl">
+            <span className="text-gold-gradient italic">Jasur</span>
+            <span className="mx-2 text-mocha/60 italic">&amp;</span>
+            <br className="sm:hidden" />
+            <span className="text-gold-gradient italic">Nilufar</span>
           </h1>
         </Reveal>
         <Reveal delay={300}>
-          <p className="mt-8 text-2xl tracking-[0.3em] text-mocha/70">09 · 09 · 2026</p>
-          <p className="mt-2 text-sm uppercase tracking-[0.4em] text-mocha/60">9 Sentyabr 2026 · Chorshanba</p>
+          <p className="mt-6 text-xl tracking-[0.4em] text-mocha/70 sm:text-2xl">09 · 09 · 2026</p>
         </Reveal>
         <Reveal delay={450}>
-          <div className="mx-auto mt-12 grid max-w-xl grid-cols-4 gap-3 sm:gap-6">
+          <div className="mx-auto mt-10 grid max-w-md grid-cols-2 gap-3 sm:max-w-xl sm:grid-cols-4">
             {cells.map((c) => (
               <div
                 key={c.label}
-                className="rounded-lg border border-gold/30 bg-card/80 px-2 py-4 shadow-[var(--shadow-soft)] backdrop-blur"
+                className="rounded-2xl border border-gold/25 bg-card/70 px-3 py-5 shadow-[var(--shadow-soft)] backdrop-blur-sm"
               >
-                <div className="text-gold-gradient text-3xl font-semibold tabular-nums sm:text-5xl">
+                <div className="font-serif text-4xl font-semibold tabular-nums text-mocha sm:text-5xl">
                   {String(c.value).padStart(2, "0")}
                 </div>
-                <div className="mt-1 text-[10px] uppercase tracking-[0.25em] text-mocha/60 sm:text-xs">
+                <div className="mt-1 text-[10px] uppercase tracking-[0.3em] text-mocha/55 sm:text-xs">
                   {c.label}
                 </div>
               </div>
             ))}
           </div>
+        </Reveal>
+        <Reveal delay={650}>
+          <a
+            href="#taklifnoma"
+            aria-label="Pastga aylantirish"
+            className="mt-12 inline-grid h-10 w-10 place-items-center rounded-full text-gold animate-[heartbeat_2s_ease-in-out_infinite]"
+          >
+            <ChevronDown className="h-7 w-7" />
+          </a>
         </Reveal>
       </div>
     </section>
