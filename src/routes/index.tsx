@@ -1,6 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useRef, useState, type FormEvent } from "react";
-import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music } from "lucide-react";
+import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music, ArrowLeft, Lock } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+
+const INVITATION_KEY = "golden_vows";
+const ADMIN_PASSWORD = "goldenvows2026";
+const MAIN_SITE_URL = "https://webinvite-six.vercel.app/";
+
+type RsvpRow = {
+  created_at: string;
+  name: string;
+  attendance: string;
+  guests: number;
+  comment: string;
+};
 
 import heroBg from "@/assets/hero-bg.jpg";
 import floralFrame from "@/assets/floral-frame.png";
@@ -275,8 +288,70 @@ function WeddingPage() {
   const [opened, setOpened] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [lang, setLang] = useState<Lang>("UZ");
+  const [adminOverlay, setAdminOverlay] = useState(false);
+  const [adminPass, setAdminPass] = useState("");
+  const [adminErr, setAdminErr] = useState(false);
+  const [adminDash, setAdminDash] = useState(false);
+  const [rsvps, setRsvps] = useState<RsvpRow[]>([]);
+  const [visitsToday, setVisitsToday] = useState(0);
+  const [visitsTotal, setVisitsTotal] = useState(0);
   const ytRef = useRef<HTMLIFrameElement | null>(null);
   const t = T[lang];
+
+  // Visit counter (Supabase — shared across devices, tagged per invitation)
+  useEffect(() => {
+    if (sessionStorage.getItem("gv_counted")) return;
+    sessionStorage.setItem("gv_counted", "1");
+    supabase
+      .from("invitation_visits")
+      .insert({ invitation: INVITATION_KEY })
+      .then(({ error }) => {
+        if (error) console.error("[visits] insert error", error);
+      });
+  }, []);
+
+  const fetchStats = async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const [{ count: total }, { count: day }] = await Promise.all([
+      supabase
+        .from("invitation_visits")
+        .select("*", { count: "exact", head: true })
+        .eq("invitation", INVITATION_KEY),
+      supabase
+        .from("invitation_visits")
+        .select("*", { count: "exact", head: true })
+        .eq("invitation", INVITATION_KEY)
+        .gte("created_at", `${today}T00:00:00Z`),
+    ]);
+    setVisitsTotal(total || 0);
+    setVisitsToday(day || 0);
+  };
+
+  const loadRsvps = async () => {
+    const { data, error } = await supabase
+      .from("invitation_rsvp")
+      .select("*")
+      .eq("invitation", INVITATION_KEY)
+      .order("created_at", { ascending: true });
+    if (error) {
+      console.error("[rsvp] load error", error);
+      setRsvps([]);
+      return;
+    }
+    setRsvps((data as RsvpRow[]) || []);
+  };
+
+  const tryAdminLogin = () => {
+    if (adminPass === ADMIN_PASSWORD) {
+      setAdminOverlay(false);
+      setAdminErr(false);
+      loadRsvps();
+      fetchStats();
+      setAdminDash(true);
+    } else {
+      setAdminErr(true);
+    }
+  };
 
   const ytCommand = (func: "playVideo" | "pauseVideo" | "setVolume", args: unknown[] = []) => {
     ytRef.current?.contentWindow?.postMessage(
@@ -318,6 +393,10 @@ function WeddingPage() {
           className="pointer-events-none fixed -left-[9999px] top-0 h-px w-px opacity-0"
         />
         <Petals />
+
+        <a href={MAIN_SITE_URL} className="btn-back" title="WebInvite bosh sahifasi">
+          <ArrowLeft className="h-4 w-4" /> WebInvite.uz
+        </a>
 
         {opened && <LangSwitcher lang={lang} setLang={setLang} />}
 
@@ -365,6 +444,125 @@ function WeddingPage() {
         <Gallery />
         <Rsvp />
         <Closing />
+
+        <button
+          type="button"
+          className="admin-key"
+          style={{ position: "fixed", bottom: 8, left: 8, zIndex: 50 }}
+          title="Admin"
+          onClick={() => {
+            setAdminOverlay(true);
+            setAdminPass("");
+            setAdminErr(false);
+          }}
+        >
+          <Lock className="h-4 w-4" />
+        </button>
+
+        {adminOverlay && (
+          <div
+            className="admin-overlay"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setAdminOverlay(false);
+            }}
+          >
+            <div className="admin-box">
+              <h3>Admin kirish</h3>
+              <p>Bu bo'lim faqat sayt egasi uchun.</p>
+              <input
+                type="password"
+                placeholder="Parol"
+                value={adminPass}
+                onChange={(e) => setAdminPass(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && tryAdminLogin()}
+                autoFocus
+              />
+              {adminErr && <p className="admin-err">Parol noto'g'ri.</p>}
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  type="button"
+                  className="btn-back"
+                  style={{ position: "static", flex: 1, justifyContent: "center" }}
+                  onClick={tryAdminLogin}
+                >
+                  Kirish
+                </button>
+                <button
+                  type="button"
+                  className="btn-back"
+                  style={{ position: "static", flex: 1, justifyContent: "center", opacity: 0.7 }}
+                  onClick={() => setAdminOverlay(false)}
+                >
+                  Bekor qilish
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {adminDash && (
+          <div className="admin-dash">
+            <div className="admin-dash-inner">
+              <div className="admin-dash-head">
+                <h2>Golden Vows · Admin</h2>
+                <button
+                  type="button"
+                  className="btn-back"
+                  style={{ position: "static" }}
+                  onClick={() => setAdminDash(false)}
+                >
+                  Chiqish
+                </button>
+              </div>
+              <div className="admin-stats">
+                <div className="admin-stat-card">
+                  <b>{visitsToday}</b>
+                  <span>Bugun saytga kirganlar</span>
+                </div>
+                <div className="admin-stat-card">
+                  <b>{visitsTotal}</b>
+                  <span>Jami tashriflar</span>
+                </div>
+                <div className="admin-stat-card">
+                  <b>{rsvps.length}</b>
+                  <span>Jami RSVP javoblari</span>
+                </div>
+              </div>
+              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: 19, marginBottom: 14, color: "var(--mocha)" }}>
+                RSVP javoblari
+              </h3>
+              {rsvps.length === 0 ? (
+                <p className="admin-note">Hozircha javob yo'q.</p>
+              ) : (
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Sana</th>
+                      <th>Ism</th>
+                      <th>Ishtirok</th>
+                      <th>Mehmonlar</th>
+                      <th>Izoh</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rsvps
+                      .slice()
+                      .reverse()
+                      .map((r, i) => (
+                        <tr key={i}>
+                          <td>{new Date(r.created_at).toLocaleDateString("uz-UZ")}</td>
+                          <td>{r.name}</td>
+                          <td>{r.attendance}</td>
+                          <td>{r.guests}</td>
+                          <td>{r.comment}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        )}
       </main>
     </LangCtx.Provider>
   );
@@ -628,17 +826,14 @@ function Rsvp() {
       comment: String(fd.get("comment") ?? ""),
     };
     setStatus("sending");
-    try {
-      const res = await fetch("https://formspree.io/f/xpqekqwr", {
-        method: "POST",
-        headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        setStatus("ok");
-        form.reset();
-      } else setStatus("err");
-    } catch {
+    const { error } = await supabase
+      .from("invitation_rsvp")
+      .insert({ invitation: INVITATION_KEY, ...payload });
+    if (!error) {
+      setStatus("ok");
+      form.reset();
+    } else {
+      console.error("[rsvp] insert error", error);
       setStatus("err");
     }
   };
