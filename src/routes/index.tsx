@@ -143,7 +143,7 @@ const T: Record<Lang, Dict> = {
     fGuests: "Mehmonlar soni",
     fComment: "Izoh", fCommentPh: "Tilaklaringiz…",
     send: "Yuborish", sending: "Yuborilmoqda…",
-    ok: "💌 Rahmat! Sizni kutamiz.",
+    ok: "Rahmat! Javobingiz qabul qilindi",
     err: "Xatolik yuz berdi. Qayta urinib ko'ring.",
     deadline: "Javob — 10 Avgustgacha",
     closingTranslation: "Va U ularning qalblarini birlashtirdi",
@@ -186,7 +186,7 @@ const T: Record<Lang, Dict> = {
     fGuests: "Кол-во гостей",
     fComment: "Комментарий", fCommentPh: "Ваши пожелания…",
     send: "Отправить", sending: "Отправка…",
-    ok: "💌 Спасибо! Ждём вас.",
+    ok: "Спасибо! Ваш ответ принят",
     err: "Произошла ошибка. Попробуйте снова.",
     deadline: "Ответ — до 10 августа",
     closingTranslation: "И Он соединил их сердца",
@@ -229,7 +229,7 @@ const T: Record<Lang, Dict> = {
     fGuests: "Number of guests",
     fComment: "Comment", fCommentPh: "Your wishes…",
     send: "Send", sending: "Sending…",
-    ok: "💌 Thank you! We're waiting for you.",
+    ok: "Thank you! Your response has been received",
     err: "Something went wrong. Please try again.",
     deadline: "Reply by August 10",
     closingTranslation: "And He united their hearts",
@@ -272,7 +272,7 @@ const T: Record<Lang, Dict> = {
     fGuests: "Меҳмонлар сони",
     fComment: "Изоҳ", fCommentPh: "Тилакларингиз…",
     send: "Юбориш", sending: "Юборилмоқда…",
-    ok: "💌 Раҳмат! Сизни кутамиз.",
+    ok: "Раҳмат! Жавобингиз қабул қилинди",
     err: "Хатолик юз берди. Қайта уриниб кўринг.",
     deadline: "Жавоб — 10 Августгача",
     closingTranslation: "Ва У уларнинг қалбларини бирлаштирди",
@@ -474,33 +474,34 @@ function WeddingPage() {
             }}
           >
             <div className="admin-box">
-              <h3>Admin kirish</h3>
-              <p>Bu bo'lim faqat sayt egasi uchun.</p>
+              <h3>Admin panel</h3>
+              <label style={{ display: "block", textAlign: "left", fontSize: 12, letterSpacing: ".15em", textTransform: "uppercase", color: "var(--mocha)", opacity: 0.6, marginBottom: 6 }}>
+                Parol
+              </label>
               <input
                 type="password"
-                placeholder="Parol"
                 value={adminPass}
                 onChange={(e) => setAdminPass(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && tryAdminLogin()}
                 autoFocus
               />
               {adminErr && <p className="admin-err">Parol noto'g'ri.</p>}
-              <div style={{ display: "flex", gap: 10 }}>
+              <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
                 <button
                   type="button"
                   className="btn-back"
-                  style={{ position: "static", flex: 1, justifyContent: "center" }}
-                  onClick={tryAdminLogin}
+                  style={{ flex: 1, justifyContent: "center" }}
+                  onClick={() => setAdminOverlay(false)}
                 >
-                  Kirish
+                  Yopish
                 </button>
                 <button
                   type="button"
-                  className="btn-back"
-                  style={{ position: "static", flex: 1, justifyContent: "center", opacity: 0.7 }}
-                  onClick={() => setAdminOverlay(false)}
+                  className="wi-link-btn"
+                  style={{ flex: 1, height: 44, letterSpacing: ".15em", fontSize: 14 }}
+                  onClick={tryAdminLogin}
                 >
-                  Bekor qilish
+                  Kirish
                 </button>
               </div>
             </div>
@@ -511,61 +512,62 @@ function WeddingPage() {
           <div className="admin-dash">
             <div className="admin-dash-inner">
               <div className="admin-dash-head">
-                <h2>Golden Vows · Admin</h2>
+                <h2>Admin panel</h2>
                 <button
                   type="button"
                   className="btn-back"
-                  style={{ position: "static" }}
                   onClick={() => setAdminDash(false)}
                 >
-                  Chiqish
+                  Yopish
                 </button>
               </div>
               <div className="admin-stats">
                 <div className="admin-stat-card">
-                  <b>{visitsToday}</b>
-                  <span>Bugun saytga kirganlar</span>
-                </div>
-                <div className="admin-stat-card">
-                  <b>{visitsTotal}</b>
-                  <span>Jami tashriflar</span>
-                </div>
-                <div className="admin-stat-card">
                   <b>{rsvps.length}</b>
-                  <span>Jami RSVP javoblari</span>
+                  <span>Javoblar</span>
+                </div>
+                <div className="admin-stat-card">
+                  <b>
+                    {rsvps.reduce(
+                      (sum, r) => (r.attendance === "yes" ? sum + (r.guests || 1) : sum),
+                      0,
+                    )}
+                  </b>
+                  <span>Jami mehmonlar</span>
                 </div>
               </div>
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: 19, marginBottom: 14, color: "var(--mocha)" }}>
-                RSVP javoblari
-              </h3>
               {rsvps.length === 0 ? (
                 <p className="admin-note">Hozircha javob yo'q.</p>
               ) : (
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Sana</th>
-                      <th>Ism</th>
-                      <th>Ishtirok</th>
-                      <th>Mehmonlar</th>
-                      <th>Izoh</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rsvps
-                      .slice()
-                      .reverse()
-                      .map((r, i) => (
-                        <tr key={i}>
-                          <td>{new Date(r.created_at).toLocaleDateString("uz-UZ")}</td>
-                          <td>{r.name}</td>
-                          <td>{r.attendance}</td>
-                          <td>{r.guests}</td>
-                          <td>{r.comment}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <div className="admin-rsvp-list">
+                  {rsvps
+                    .slice()
+                    .reverse()
+                    .map((r, i) => (
+                      <div className="admin-rsvp-card" key={i}>
+                        <div className="admin-rsvp-row">
+                          <span className="admin-rsvp-name">{r.name}</span>
+                          <span
+                            className={
+                              "admin-rsvp-badge " +
+                              (r.attendance === "yes" ? "admin-rsvp-badge-yes" : "admin-rsvp-badge-no")
+                            }
+                          >
+                            {r.attendance === "yes" ? "Ha, albatta" : "Afsuski, yo'q"}
+                          </span>
+                        </div>
+                        <div className="admin-rsvp-row">
+                          <span className="admin-rsvp-date">
+                            {new Date(r.created_at).toLocaleString("uz-UZ")}
+                          </span>
+                          {r.attendance === "yes" && r.guests > 1 && (
+                            <span className="admin-rsvp-guests">× {r.guests}</span>
+                          )}
+                        </div>
+                        {r.comment && <p className="admin-rsvp-comment">{r.comment}</p>}
+                      </div>
+                    ))}
+                </div>
               )}
             </div>
           </div>
@@ -854,6 +856,12 @@ function Rsvp() {
           <p className="mt-4 text-mocha/70">{t.rsvpHint}</p>
         </Reveal>
         <Reveal delay={150}>
+          {status === "ok" ? (
+            <div className="mt-10 rounded-2xl border border-gold/30 bg-card p-10 text-center shadow-[var(--shadow-soft)] sm:p-14">
+              <Heart className="mx-auto h-8 w-8 fill-gold text-gold animate-heartbeat" />
+              <p className="mt-6 font-serif text-xl text-mocha sm:text-2xl">{t.ok}</p>
+            </div>
+          ) : (
           <form
             onSubmit={onSubmit}
             className="mt-10 space-y-5 rounded-2xl border border-gold/30 bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8"
@@ -874,8 +882,8 @@ function Rsvp() {
                 className="w-full rounded-lg border border-border bg-background px-4 py-3 font-serif text-lg outline-none focus:border-gold focus:ring-2 focus:ring-gold/40"
               >
                 <option value="" disabled>{t.fAttendChoose}</option>
-                <option value={t.fAttendYes}>{t.fAttendYes}</option>
-                <option value={t.fAttendNo}>{t.fAttendNo}</option>
+                <option value="yes">{t.fAttendYes}</option>
+                <option value="no">{t.fAttendNo}</option>
               </select>
             </Field>
             <Field label={t.fGuests}>
@@ -906,13 +914,11 @@ function Rsvp() {
               {status === "sending" ? t.sending : t.send}
             </button>
 
-            {status === "ok" && (
-              <p className="text-center text-sm text-mocha/75">{t.ok}</p>
-            )}
             {status === "err" && (
               <p className="text-center text-sm text-destructive">{t.err}</p>
             )}
           </form>
+          )}
         </Reveal>
 
         <Reveal delay={300}>
