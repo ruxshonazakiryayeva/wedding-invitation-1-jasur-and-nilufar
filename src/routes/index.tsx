@@ -4,7 +4,7 @@ import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music, Lock
 import { supabase } from "@/lib/supabaseClient";
 
 const INVITATION_KEY = "golden_vows";
-const ADMIN_PASSWORD = "goldenvows2026";
+const ADMIN_PASSWORD = "1317";
 const MAIN_SITE_URL = "https://webinvite-six.vercel.app/";
 
 type RsvpRow = {
