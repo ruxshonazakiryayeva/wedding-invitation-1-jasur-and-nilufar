@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useRef, useState, type FormEvent } from "react";
-import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music, ArrowLeft, Lock } from "lucide-react";
+import { Heart, MapPin, Calendar as CalendarIcon, Send, ChevronDown, Music, Lock } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
 const INVITATION_KEY = "golden_vows";
@@ -394,10 +394,6 @@ function WeddingPage() {
         />
         <Petals />
 
-        <a href={MAIN_SITE_URL} className="btn-back" title="WebInvite bosh sahifasi">
-          <ArrowLeft className="h-4 w-4" /> WebInvite.uz
-        </a>
-
         {opened && <LangSwitcher lang={lang} setLang={setLang} />}
 
         {opened && (
@@ -445,19 +441,30 @@ function WeddingPage() {
         <Rsvp />
         <Closing />
 
-        <button
-          type="button"
-          className="admin-key"
-          style={{ position: "fixed", bottom: 8, left: 8, zIndex: 50 }}
-          title="Admin"
-          onClick={() => {
-            setAdminOverlay(true);
-            setAdminPass("");
-            setAdminErr(false);
-          }}
-        >
-          <Lock className="h-4 w-4" />
-        </button>
+        <footer style={{ position: "relative", padding: "40px 24px", textAlign: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+            <button
+              type="button"
+              className="admin-key"
+              title="Admin"
+              onClick={() => {
+                setAdminOverlay(true);
+                setAdminPass("");
+                setAdminErr(false);
+              }}
+            >
+              <Lock className="h-4 w-4" />
+            </button>
+            <a
+              href={MAIN_SITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wi-link-btn"
+            >
+              WI
+            </a>
+          </div>
+        </footer>
 
         {adminOverlay && (
           <div
